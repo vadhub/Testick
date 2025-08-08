@@ -21,16 +21,26 @@ public class Script {
     }
 
     private String createBlockManyVariant(String name, List<String> values) {
-        StringBuilder check = new StringBuilder();
-        values.forEach(c -> check.append("[...").append(name).append("].some(v => v.value === \"").append(c).append("\")").append("&&"));
-        check.setLength(check.length() - 2);
-        check.append(";");
-        var condition = "let " + name + "Valid = " + values.size() + ".length === " + values.size() + " && \n" + check;
-        return "          \nlet " + name + " = document.querySelector('input[name=\"" + name + "\"]:checked');\n" +
-                condition +
-                "            results.push(" + name + " && " + name + ".value === \"" + values + "\" ? \"Верно\" : \"Неверно\");\n" +
-                "            ball = " + name + " && " + name + ".value === \"" + values + "\" ? 1 : 0;\n" +
-                "            balls += ball;\n";
+        String checkedCheckbox = "const checkboxes = document.querySelectorAll('input[name=" + name + "]');\n"
+                + "            const selectedValues = new Set(\n" + "    Array.from(checkboxes)\n"
+                + "        .filter(cb => cb.checked)\n" + "        .map(cb => cb.value)\n" + ");\n";
+
+        String corVal = "";
+        for (String val : values) {
+            corVal += "\""+val+"\",";
+        }
+
+        corVal = corVal.substring(0, corVal.length() - 1);
+
+        String correctValues = "const correctValues = new Set([" + corVal + "]);";
+
+        String isCorrect = "const isCorrect = \n" + "    selectedValues.size === " + values.size() + " &&\n"
+                + "    [...selectedValues].every(val => correctValues.has(val)) &&\n"
+                + "    [...correctValues].every(val => selectedValues.has(val));\n" + "\n" + "if (isCorrect) {\n"
+                + "    results.push(\"Верно\");\n" + "    balls += 1;\n" + "} else {\n"
+                + "    results.push(\"Неверно\");\n" + "} ";
+
+        return checkedCheckbox + correctValues + isCorrect;
     }
 
     private String createBlockText(String name, String value, boolean isRightExist) {
