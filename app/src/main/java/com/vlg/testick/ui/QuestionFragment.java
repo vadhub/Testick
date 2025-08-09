@@ -26,9 +26,7 @@ import com.vlg.testick.model.Script;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class QuestionFragment extends BaseFragment {
-
-    private static final int STORAGE_PERMISSION_CODE = 100;
+public class QuestionFragment extends FileSaveFragment {
 
     @Nullable
     @Override

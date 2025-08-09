@@ -27,12 +27,6 @@ public class VariantDialog extends DialogFragment {
         void create(Variant variant);
     }
 
-    private String id;
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     private VariantCreate variantCreate;
 
     public void setVariantCreate(VariantCreate variantCreate) {

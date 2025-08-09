@@ -22,13 +22,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/saveEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"
+        app:layout_constraintBottom_toTopOf="@id/console"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="help"
+        app:layout_constraintStart_toEndOf="@+id/saveEdit"
+        app:layout_constraintBottom_toTopOf="@id/console" />
+
+    <Button
         android:id="@+id/generateQuizFromText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="generate"
         app:layout_constraintBottom_toTopOf="@id/console"
         app:layout_constraintEnd_toStartOf="@+id/testWebButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/help" />
 
     <Button
         android:id="@+id/testWebButton"
@@ -36,15 +52,7 @@
         android:layout_height="wrap_content"
         android:text="test"
         app:layout_constraintBottom_toTopOf="@id/console"
-        app:layout_constraintEnd_toStartOf="@id/help" />
-
-    <Button
-        android:id="@+id/help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="help"
-        app:layout_constraintBottom_toTopOf="@id/console"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/console"

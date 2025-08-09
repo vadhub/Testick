@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class EditorFragment extends BaseFragment {
+public class EditorFragment extends FileSaveFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,6 +35,7 @@ public class EditorFragment extends BaseFragment {
         Button generate = view.findViewById(R.id.generateQuizFromText);
         Button test = view.findViewById(R.id.testWebButton);
         Button help = view.findViewById(R.id.help);
+        Button save = view.findViewById(R.id.saveEdit);
         EditText code = view.findViewById(R.id.editor);
         View bachg = view.findViewById(R.id.backgr);
         ProgressBar progressBar = view.findViewById(R.id.progressBarEditor);
@@ -73,5 +74,26 @@ public class EditorFragment extends BaseFragment {
         console.setText(consoleText.get());
         test.setOnClickListener(v -> navigation.startFragment(new WebFragment()));
         help.setOnClickListener(v -> navigation.startFragment(new HelpFragment()));
+        save.setOnClickListener(v -> {
+            SaveDialog saveDialog = new SaveDialog();
+            saveDialog.setSaveChoose((script, file, fileName, scriptName) -> {
+                if (script) {
+                    Log.d("!!!", "Script");
+                    this.isChach = false;
+                    this.fileName = scriptName+".tcs";
+                    this.content = code.getText().toString();
+                    checkStoragePermission();
+                }
+
+                if (file) {
+                    Log.d("!!!", "File");
+                    this.isChach = true;
+                    this.fileName = fileName+".html";
+                    this.cacheFileName = "index.html";
+                    checkStoragePermission();
+                }
+            });
+            saveDialog.show(getParentFragmentManager(), "SAVE_DIALOG");
+        });
     }
 }
