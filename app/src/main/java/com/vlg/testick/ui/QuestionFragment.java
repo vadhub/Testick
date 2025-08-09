@@ -42,6 +42,7 @@ public class QuestionFragment extends BaseFragment {
         EditText title = view.findViewById(R.id.titleQuiz);
         Button generateButton = view.findViewById(R.id.generateQuiz);
         Button test = view.findViewById(R.id.test);
+        Button editorButton = view.findViewById(R.id.editorButton);
         View bachg = view.findViewById(R.id.backg);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
@@ -113,6 +114,7 @@ public class QuestionFragment extends BaseFragment {
         }));
 
         test.setOnClickListener(v -> navigation.startFragment(new WebFragment()));
+        editorButton.setOnClickListener(v -> navigation.startFragment(new EditorFragment()));
 
     }
 }

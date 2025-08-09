@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="Syntax"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="'?' - start question\n 'r' - radio answer\n 'c' - checkbox answers\n 't'- text\n '-' - start variant\n '+' - right answer\n 'e' - end of variants\n '_' - text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="Example"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Title My title\nH1 Super Test\n\n? 2+2= r\n- 4 +\n- 5\n- 6 e\n\n ? Second question c\n- A\n- B +\n- C +e \n\n ? Text question t \n _ My answer"
+        android:textSize="14sp" />
+
+
+</LinearLayout>

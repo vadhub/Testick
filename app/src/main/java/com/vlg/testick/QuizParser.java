@@ -1,5 +1,7 @@
 package com.vlg.testick;
 
+import android.util.Log;
+
 import com.vlg.testick.model.Question;
 import com.vlg.testick.model.Quiz;
 import com.vlg.testick.model.Script;
@@ -86,7 +88,7 @@ public class QuizParser {
     private static final Pattern OPTION_PATTERN = Pattern.compile("^\\s*-\\s*(?:\"([^\"]*)\"|([^\"]+?))\\s*([e+\\s]*)\\s*");
     private static final Pattern QUESTION_PATTERN = Pattern.compile("^\\s*\\?\\s*(?:\"([^\"]*)\"|([^\"]+?))\\s*([ctr])\\s*");
 
-    public static Quiz parseQuiz(String code) {
+    public static Quiz parseQuiz(String code) throws Exception {
         String[] lines = code.split("\n");
 
         Quiz quiz = new Quiz();
@@ -99,8 +101,11 @@ public class QuizParser {
         String name = "";
 
         for (String line : lines) {
-            if (!line.startsWith("-") && !line.startsWith("?") && !line.startsWith("___")) {
-                System.out.println("-------- Parse metadata --------");
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+            if (!line.startsWith("-") && !line.startsWith("?") && !line.startsWith("_")) {
                 parseMetadata(line, quiz);
             } else if (line.startsWith("?")) {
                 if (current != null && !variants.isEmpty()) {
@@ -117,7 +122,7 @@ public class QuizParser {
             } else if (line.startsWith("-")) {
                 currentV = parseOption(line, name, type);
                 variants.add(currentV);
-            } else if (line.startsWith("___")) {
+            } else if (line.startsWith("_")) {
                 currentV = parseTextAnswer(line, name);
                 variants.add(currentV);
             }
@@ -134,11 +139,11 @@ public class QuizParser {
         return quiz;
     }
 
-    public static void parseMetadata(String line, Quiz quiz) {
+    public static void parseMetadata(String line, Quiz quiz) throws Exception {
         String[] strings = line.split(" ", 2);
+        Log.d("!!", Arrays.toString(strings));
         if (strings.length < 2) {
-            System.err.println("Invalid text answer: " + line);
-            return;
+            throw new Exception("Invalid metadata: " + line);
         }
         switch (strings[0]) {
             case "Style":
@@ -155,7 +160,7 @@ public class QuizParser {
         }
     }
 
-    public static Pair<String, String> parseQuestion(String line) {
+    public static Pair<String, String> parseQuestion(String line) throws Exception {
         Pair<String, String> pair;
         Matcher matcher = QUESTION_PATTERN.matcher(line);
         if (matcher.matches()) {
@@ -163,14 +168,13 @@ public class QuizParser {
             String flag = matcher.group(3);
             pair = new Pair<>(flag, text);
         } else {
-            pair = new Pair<>("!", "!");
-            System.out.println("Invalid format: " + line);
+            throw new Exception("Invalid format: " + line);
         }
 
         return pair;
     }
 
-    public static Variant parseOption(String line, String name, Type type) {
+    public static Variant parseOption(String line, String name, Type type) throws Exception {
         Variant variant;
         Matcher matcher = OPTION_PATTERN.matcher(line);
         if (matcher.matches()) {
@@ -185,25 +189,22 @@ public class QuizParser {
             variant = new Variant.Builder().name(name).value(UniqueNameGenerator.generate()).type(type).text(text).isRight(isRight).addNewLine(!hasNewLine).build();
 
         } else {
-            variant = new Variant.Builder().build();
-            System.out.println("Invalid format: " + line);
+            throw new Exception("Invalid format: " + line);
         }
 
         return variant;
     }
 
-    public static Variant parseTextAnswer(String line, String name) {
+    public static Variant parseTextAnswer(String line, String name) throws Exception {
         Variant variantos;
         String[] variant = line.split(" ", 2);
         if (variant.length < 2) {
-            System.err.println("Invalid text answer: " + line);
-            return null;
+            throw new Exception("Invalid text answer: " + line);
         }
         String text = variant[1];
         text = text.replaceAll("^\"|\"$", "");
 
-        variantos = new Variant.Builder().name(name).type(Type.TEXT).text(text).addNewLine().build();
-        System.out.println("Text: " + text);
+        variantos = new Variant.Builder().name(name).type(Type.TEXT).value(text).addNewLine().build();
         return variantos;
     }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editor"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:gravity="top|start"
+        android:hint="code"
+        android:inputType="textMultiLine"
+        android:lines="150"
+        android:maxLines="100"
+        android:minLines="3"
+        android:scrollbars="vertical"
+        android:text="Title My title\nH1 Super Test\n\n? 2+2= r\n- 4 +\n- 5\n- 6 e\n\n ? Second question c\n- A\n- B +\n- C +e \n\n ? Text question t \n _ My answer"
+        app:layout_constraintBottom_toTopOf="@+id/generateQuizFromText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/generateQuizFromText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="generate"
+        app:layout_constraintBottom_toTopOf="@id/console"
+        app:layout_constraintEnd_toStartOf="@+id/testWebButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/testWebButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test"
+        app:layout_constraintBottom_toTopOf="@id/console"
+        app:layout_constraintEnd_toStartOf="@id/help" />
+
+    <Button
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="help"
+        app:layout_constraintBottom_toTopOf="@id/console"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/console"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="error"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/backgr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white_pile"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/progressBarEditor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

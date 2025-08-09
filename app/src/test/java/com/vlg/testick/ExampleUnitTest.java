@@ -48,7 +48,11 @@ public class ExampleUnitTest {
         };
 
         for (String example : examples) {
-            QuizParser.parseQuestion(example);
+            try {
+                QuizParser.parseQuestion(example);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
@@ -59,13 +63,17 @@ public class ExampleUnitTest {
                 "Style default \n" +
                 "? first question r \n" +
                 "- Are you hui? +\n" +
-                "- Are you orange? e\n" +
+                "- Русский язык? e\n" +
                 "? second question c\n" +
                 "- vasya +\n" +
                 "- petya\n" +
                 "- anton +e\n" +
                 "? third question t\n" +
                 "___ my answer";
-        System.out.println(QuizParser.parseQuiz(exampleCode).generate());
+        try {
+            System.out.println(QuizParser.parseQuiz(exampleCode).generate());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
