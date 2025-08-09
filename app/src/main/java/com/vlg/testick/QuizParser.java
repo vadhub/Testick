@@ -1,7 +1,18 @@
 package com.vlg.testick;
 
+import com.vlg.testick.model.Question;
+import com.vlg.testick.model.Quiz;
+import com.vlg.testick.model.Script;
+import com.vlg.testick.model.Type;
+import com.vlg.testick.model.Variant;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import kotlin.Pair;
 
 /**
  * <p>
@@ -45,76 +56,122 @@ import java.util.regex.Pattern;
 
 public class QuizParser {
 
-    private static final Pattern OPTION_PATTERN = Pattern.compile("^\\s*-\\s*(?:\"([^\"]*)\"|([^\"\\s]+(?:[^\"\\S]+[^\"\\s]+)*))\\s*([+e]*)\\s*$");
+    public static class UniqueNameGenerator {
+        private static long lastTimestamp = 0;
+        private static int counter = 0;
+
+        public static synchronized String generate() {
+            long current = System.currentTimeMillis();
+            if (current == lastTimestamp) {
+                counter++;
+            } else {
+                counter = 0;
+                lastTimestamp = current;
+            }
+            return "el-" + current + "-" + counter;
+        }
+
+        public static synchronized String generate(String type) {
+            long current = System.currentTimeMillis();
+            if (current == lastTimestamp) {
+                counter++;
+            } else {
+                counter = 0;
+                lastTimestamp = current;
+            }
+            return type + "-" + current + "-" + counter;
+        }
+    }
+
+    private static final Pattern OPTION_PATTERN = Pattern.compile("^\\s*-\\s*(?:\"([^\"]*)\"|([^\"]+?))\\s*([e+\\s]*)\\s*");
     private static final Pattern QUESTION_PATTERN = Pattern.compile("^\\s*\\?\\s*(?:\"([^\"]*)\"|([^\"]+?))\\s*([ctr])\\s*");
 
-    public static void parseQuiz(String code) {
+    public static Quiz parseQuiz(String code) {
         String[] lines = code.split("\n");
+
+        Quiz quiz = new Quiz();
+        Question current = null;
+        Variant currentV;
+        List<Variant> variants = new ArrayList<>();
+        List<Question> questions = new ArrayList<>();
+        int i = 0;
+        Type type = Type.TEXT;
+        String name = "";
 
         for (String line : lines) {
             if (!line.startsWith("-") && !line.startsWith("?") && !line.startsWith("___")) {
                 System.out.println("-------- Parse metadata --------");
-                parseMetadata(line);
-            } else if (!line.startsWith("-") && line.startsWith("?") && !line.startsWith("___")) {
-                System.out.println("-------- Parse question --------");
-                parseQuestion(line);
-            } else if (line.startsWith("-") && !line.startsWith("?") && !line.startsWith("___")) {
-                System.out.println("-------- Parse variant --------");
-                parseOption(line);
-            } else if (!line.startsWith("-") && !line.startsWith("?") && line.startsWith("___")) {
-                System.out.println("-------- Parse variant with text --------");
-                String[] variant = line.split(" ");
-                String text = variant[1];
-                if (text.startsWith("\"")) {
-                    text = text.substring(1);
+                parseMetadata(line, quiz);
+            } else if (line.startsWith("?")) {
+                if (current != null && !variants.isEmpty()) {
+                    current.setVariants(variants);
+                    variants = new ArrayList<>();
+                    questions.add(current);
                 }
-                if (text.endsWith("\"")) {
-                    text = text.substring(text.length() - 1);
-                }
-                System.out.println("Text: " + text);
+                Pair<String, String> p = parseQuestion(line);
+                type = detectTypeFromFlag(p.getFirst());
+                name = p.getFirst() + i;
+                current = new Question();
+                current.setTitle(p.getSecond());
+                i++;
+            } else if (line.startsWith("-")) {
+                currentV = parseOption(line, name, type);
+                variants.add(currentV);
+            } else if (line.startsWith("___")) {
+                currentV = parseTextAnswer(line, name);
+                variants.add(currentV);
             }
         }
+
+        if (current != null) {
+            current.setVariants(variants);
+            questions.add(current);
+        }
+
+        questions.forEach(q -> System.out.println(Arrays.toString(q.getVariants().toArray())));
+        quiz.setQuestions(questions);
+        quiz.setScript(new Script(questions).generate());
+        return quiz;
     }
 
-    public static void parseMetadata(String line) {
+    public static void parseMetadata(String line, Quiz quiz) {
         String[] strings = line.split(" ", 2);
-        String style = "";
-        String title = "";
-        String h1 = "";
+        if (strings.length < 2) {
+            System.err.println("Invalid text answer: " + line);
+            return;
+        }
         switch (strings[0]) {
             case "Style":
-                style = strings[1];
+                if (!strings[1].trim().equals("default")) quiz.setStyle(strings[1]);
                 break;
 
             case "Title":
-                title = strings[1];
+                quiz.setTitle(strings[1]);
                 break;
 
             case "H1":
-                h1 = strings[1];
+                quiz.setTitleH1(strings[1]);
                 break;
         }
-
-        System.out.println("Style: " + style);
-        System.out.println("Title: " + title);
-        System.out.println("H1: " + h1);
     }
 
-    public static void parseQuestion(String line) {
+    public static Pair<String, String> parseQuestion(String line) {
+        Pair<String, String> pair;
         Matcher matcher = QUESTION_PATTERN.matcher(line);
         if (matcher.matches()) {
             String text = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
             String flag = matcher.group(3);
-
-            System.out.println("Text: " + text);
-            System.out.println("Flag: " + flag);
-            System.out.println("------");
+            pair = new Pair<>(flag, text);
         } else {
+            pair = new Pair<>("!", "!");
             System.out.println("Invalid format: " + line);
         }
+
+        return pair;
     }
 
-    public static void parseOption(String line) {
+    public static Variant parseOption(String line, String name, Type type) {
+        Variant variant;
         Matcher matcher = OPTION_PATTERN.matcher(line);
         if (matcher.matches()) {
             String text = matcher.group(1) != null ?
@@ -125,13 +182,41 @@ public class QuizParser {
 
             boolean isRight = flags.contains("+");
             boolean hasNewLine = flags.contains("e");
+            variant = new Variant.Builder().name(name).value(UniqueNameGenerator.generate()).type(type).text(text).isRight(isRight).addNewLine(!hasNewLine).build();
 
-            System.out.println("Text: " + text);
-            System.out.println("Is right: " + isRight);
-            System.out.println("New line: " + hasNewLine);
-            System.out.println("------");
         } else {
+            variant = new Variant.Builder().build();
             System.out.println("Invalid format: " + line);
+        }
+
+        return variant;
+    }
+
+    public static Variant parseTextAnswer(String line, String name) {
+        Variant variantos;
+        String[] variant = line.split(" ", 2);
+        if (variant.length < 2) {
+            System.err.println("Invalid text answer: " + line);
+            return null;
+        }
+        String text = variant[1];
+        text = text.replaceAll("^\"|\"$", "");
+
+        variantos = new Variant.Builder().name(name).type(Type.TEXT).text(text).addNewLine().build();
+        System.out.println("Text: " + text);
+        return variantos;
+    }
+
+    public static Type detectTypeFromFlag(String flag) {
+        switch (flag) {
+            case "r":
+                return Type.RADIO;
+            case "c":
+                return Type.CHECKBOX;
+            case "t":
+                return Type.TEXT;
+            default:
+                throw new IllegalArgumentException("Unknown flag: " + flag);
         }
     }
 }

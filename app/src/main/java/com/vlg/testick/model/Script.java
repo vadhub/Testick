@@ -56,8 +56,6 @@ public class Script {
     public String generate() {
         StringBuilder blocks = new StringBuilder();
         questions.forEach(q -> {
-            Log.d("!!", q.right().size() + "");
-            Log.d("!!!", q.getVariants().get(0).getName() + " " + q.right().get(0));
             switch (q.getVariants().get(0).getType()) {
                 case TEXT:
                     String answer = "";

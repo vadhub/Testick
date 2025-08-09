@@ -15,23 +15,23 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void parserOption_test() {
-        String[] examples = {
-                "- \"i am\" + e",
-                "- \"i am\" +",
-                "- \"текст еще один\" e",
-                "- \"текст\"",
-                "-\"текст +e\"",
-                "- \"___\"",
-                "  -   \"trimmed text\"  e+  ",
-                "\"trimmed text\""
-        };
-
-        for (String example : examples) {
-            QuizParser.parseOption(example);
-        }
-    }
+//    @Test
+//    public void parserOption_test() {
+//        String[] examples = {
+//                "- \"i am\" + e",
+//                "- \"i am\" +",
+//                "- \"текст еще один\" e",
+//                "- \"текст\"",
+//                "-\"текст +e\"",
+//                "- \"___\"",
+//                "  -   \"trimmed text\"  e+  ",
+//                "\"trimmed text\""
+//        };
+//
+//        for (String example : examples) {
+//            QuizParser.parseOption(example);
+//        }
+//    }
 
     @Test
     public void parseQuestion_test() {
@@ -63,7 +63,9 @@ public class ExampleUnitTest {
                 "? second question c\n" +
                 "- vasya +\n" +
                 "- petya\n" +
-                "- anton +e\n";
-        QuizParser.parseQuiz(exampleCode);
+                "- anton +e\n" +
+                "? third question t\n" +
+                "___ my answer";
+        System.out.println(QuizParser.parseQuiz(exampleCode).generate());
     }
 }

@@ -15,6 +15,8 @@ public class Question {
         this.styleClass = styleClass;
     }
 
+    public Question() {}
+
     public static class Builder {
         private String title = "";
         private List<Variant> variants = List.of(new Variant.Builder().build());
