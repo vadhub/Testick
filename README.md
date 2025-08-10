@@ -34,3 +34,7 @@ H1 Super Test
 ? Text question t 
 _ My answer
 ```
+
+<p>Result</p>
+
+<img width="292" height="410" alt="image" src="test.png" />
