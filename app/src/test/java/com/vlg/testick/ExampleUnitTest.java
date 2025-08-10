@@ -58,18 +58,21 @@ public class ExampleUnitTest {
 
     @Test
     public void parseQuiz() {
-        String exampleCode = "Title title \n" +
-                "H1 h1 title \n" +
-                "Style default \n" +
-                "? first question r \n" +
-                "- Are you hui? +\n" +
-                "- Русский язык? e\n" +
-                "? second question c\n" +
-                "- vasya +\n" +
-                "- petya\n" +
-                "- anton +e\n" +
-                "? third question t\n" +
-                "___ my answer";
+        String exampleCode = "Title My title\n" +
+                "H1 Super Test\n" +
+                "\n" +
+                "? 2+2= r\n" +
+                "- 4 +\n" +
+                "- 5\n" +
+                "- 6 e\n" +
+                "\n" +
+                "? Second question c\n" +
+                "- A\n" +
+                "- B +\n" +
+                "- C +e\n" +
+                "\n" +
+                "? Text question t \n" +
+                "_ My answer";
         try {
             System.out.println(QuizParser.parseQuiz(exampleCode).generate());
         } catch (Exception e) {

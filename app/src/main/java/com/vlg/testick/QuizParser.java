@@ -53,7 +53,7 @@ import kotlin.Pair;
  * <p>- "ffffss" e
  * <p>
  * ? third
- * <p>___ "who is fuck"
+ * <p>___ "who is"
  **/
 
 public class QuizParser {
@@ -141,7 +141,6 @@ public class QuizParser {
 
     public static void parseMetadata(String line, Quiz quiz) throws Exception {
         String[] strings = line.split(" ", 2);
-        Log.d("!!", Arrays.toString(strings));
         if (strings.length < 2) {
             throw new Exception("Invalid metadata: " + line);
         }
