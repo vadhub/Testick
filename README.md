@@ -38,3 +38,6 @@ _ My answer
 <p>Result</p>
 
 <img width="292" height="410" alt="image" src="test.png" />
+
+<p>Style</p>
+By default style as in screenshot result but you can ask your own. It is important for question blocks that the style class is .question
